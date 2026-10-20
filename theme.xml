@@ -1,0 +1,1279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+<head>
+<meta charset='UTF-8'/>
+<meta content='width=device-width, initial-scale=1.0' name='viewport'/>
+<title>Mystery Type - Speed Typing Test &amp; Leaderboard</title>
+<link href='https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,400;0,500;0,700;1,400&amp;display=swap' rel='stylesheet'/>
+
+<b:skin><![CDATA[
+
+  /*
+  -----------------------------------------------
+  Blogger Template Style
+  Name: Mystery Type Theme
+  -----------------------------------------------
+  */
+  :root {
+    --bg-color: #1c1c1c;
+    --card-bg: #2b2b2b;
+    --main-color: #ff3344;
+    --caret-color: #ff3344;
+    --sub-color: #666666;
+    --text-color: #d1d0c5;
+    --error-color: #da3333;
+    --error-extra: #7e2a33;
+    --sub-alt-color: #3b3b3b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body, html {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Roboto Mono', monospace;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .app-container {
+    width: 100%;
+    max-width: 1150px;
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    flex: 1;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+  }
+
+  .logo span { color: var(--main-color); }
+
+  .header-actions {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+  }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    color: var(--sub-color);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .icon-btn:hover, .icon-btn.active { color: var(--main-color); }
+
+  .config-bar {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: var(--card-bg);
+    padding: 0.5rem 1.2rem;
+    border-radius: 8px;
+    gap: 1.2rem;
+    font-size: 0.85rem;
+    align-self: center;
+    justify-content: center;
+  }
+
+  .config-group {
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .config-btn {
+    background: none;
+    border: none;
+    color: var(--sub-color);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    transition: color 0.2s;
+  }
+
+  .config-btn:hover, .config-btn.active {
+    color: var(--main-color);
+  }
+
+  .divider {
+    width: 2px;
+    background-color: #3d3d3d;
+    height: 1.2rem;
+  }
+
+  .stats-header {
+    display: flex;
+    gap: 2rem;
+    font-size: 2rem;
+    color: var(--main-color);
+    opacity: 0;
+    transition: opacity 0.3s;
+    height: 2.5rem;
+  }
+
+  .stats-header.show { opacity: 1; }
+
+  .words-wrapper {
+    position: relative;
+    font-size: 1.45rem;
+    line-height: 2.3rem;
+    height: 6.9rem;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  #words {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 0.6em;
+    transition: transform 0.15s ease;
+  }
+
+  .word {
+    display: flex;
+    color: var(--sub-color);
+  }
+
+  .letter { position: relative; }
+
+  .letter.correct { color: var(--text-color); }
+  .letter.incorrect { color: var(--error-color); }
+  .letter.extra { color: var(--error-extra); }
+
+  #caret {
+    position: absolute;
+    width: 2px;
+    height: 1.5rem;
+    background-color: var(--caret-color);
+    border-radius: 1px;
+    transition: left 0.08s ease, top 0.08s ease;
+    animation: blink 1s infinite;
+    display: none;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  #hidden-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .restart-btn {
+    align-self: center;
+    background: none;
+    border: none;
+    color: var(--sub-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .restart-btn:hover {
+    color: var(--text-color);
+    background-color: var(--card-bg);
+  }
+
+  .result-container {
+    display: none;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .result-title {
+    font-size: 1.3rem;
+    color: var(--sub-color);
+  }
+
+  .result-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+  }
+
+  .stat-box {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-box .val {
+    font-size: 3.8rem;
+    color: var(--main-color);
+    font-weight: 700;
+  }
+
+  .stat-box .val.small {
+    font-size: 2.2rem;
+    color: var(--text-color);
+  }
+
+  .stat-box .label {
+    font-size: 0.9rem;
+    color: var(--sub-color);
+  }
+
+  .char-breakdown-card {
+    background-color: var(--card-bg);
+    padding: 1.2rem 1.8rem;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .char-grid {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  .char-item {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .char-item .num {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .char-item.correct .num { color: #44ff88; }
+  .char-item.incorrect .num { color: var(--error-color); }
+  .char-item.extra .num { color: #ffaa00; }
+  .char-item.missed .num { color: #888888; }
+
+  /* Leaderboard Styling */
+  .lb-page-container {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .lb-header-title {
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+
+  .lb-layout {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+  }
+
+  .lb-sidebar {
+    width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .lb-side-card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .lb-side-btn {
+    background: none;
+    border: none;
+    color: var(--sub-color);
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    text-align: left;
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .lb-side-btn:hover, .lb-side-btn.active {
+    background-color: var(--main-color);
+    color: #fff;
+  }
+
+  .lb-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-x: auto;
+  }
+
+  .lb-sub-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--sub-color);
+    font-size: 0.85rem;
+  }
+
+  .lb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  .lb-table th {
+    text-align: right;
+    color: var(--sub-color);
+    font-weight: normal;
+    padding: 0.8rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .lb-table th:first-child, .lb-table th:nth-child(2) {
+    text-align: left;
+  }
+
+  .lb-table tr {
+    transition: background 0.2s;
+  }
+
+  .lb-table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+  }
+
+  .lb-table tbody tr:hover {
+    background-color: var(--card-bg);
+  }
+
+  .lb-table td {
+    padding: 0.9rem 1rem;
+    text-align: right;
+    color: var(--text-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  .lb-table td:first-child, .lb-table td:nth-child(2) {
+    text-align: left;
+  }
+
+  .rank-num {
+    color: var(--sub-color);
+    font-weight: bold;
+    width: 30px;
+  }
+
+  .rank-crown {
+    color: var(--main-color);
+    font-size: 1.1rem;
+  }
+
+  .date-col {
+    color: var(--sub-color);
+    font-size: 0.8rem;
+  }
+
+  .no-data-msg {
+    color: var(--sub-color);
+    text-align: center;
+    padding: 3rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.82);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+
+  .modal {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 700px;
+    max-height: 85vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--main-color);
+  }
+
+  .setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid #333;
+  }
+
+  .setting-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    max-width: 65%;
+  }
+
+  .setting-info label {
+    font-weight: bold;
+    color: var(--text-color);
+  }
+
+  .setting-info p {
+    font-size: 0.8rem;
+    color: var(--sub-color);
+  }
+
+  .btn-group {
+    display: flex;
+    background-color: var(--bg-color);
+    padding: 0.2rem;
+    border-radius: 6px;
+    gap: 0.2rem;
+  }
+
+  .btn-group button {
+    background: none;
+    border: none;
+    color: var(--sub-color);
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .btn-group button.active {
+    background-color: var(--main-color);
+    color: #fff;
+  }
+
+  .story-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .story-item {
+    background-color: var(--bg-color);
+    padding: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .story-item:hover, .story-item.active {
+    border-color: var(--main-color);
+  }
+
+  .story-item h4 {
+    color: var(--text-color);
+    margin-bottom: 0.3rem;
+  }
+
+  .story-item p {
+    font-size: 0.8rem;
+    color: var(--sub-color);
+  }
+
+  .focus-error {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(28, 28, 28, 0.92);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-color);
+    font-size: 1.1rem;
+    backdrop-filter: blur(2px);
+    z-index: 10;
+    cursor: pointer;
+  }
+
+  .hidden { display: none !important; }
+
+  footer {
+    padding: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--sub-color);
+    text-align: center;
+  }
+
+]]></b:skin>
+</head>
+<body>
+<b:section id='main-content' showelement='yes'/>
+
+<div class='app-container'>
+  <header>
+    <div class='logo' id='logoBtn'>💀 mystery<span>type</span></div>
+    <div class='header-actions'>
+      <button class='icon-btn active' id='homeBtn' title='Typing Home'>&#9000;&#65039; Typing</button>
+      <button class='icon-btn' id='storySelectBtn' title='Select Story'>📚 Stories</button>
+      <button class='icon-btn' id='leaderboardBtn' title='Public Leaderboard'>🏆 Leaderboard</button>
+      <button class='icon-btn' id='settingsBtn' title='Settings'>&#9881;&#65039; Settings</button>
+    </div>
+  </header>
+
+  <!-- Typing App View -->
+  <div id='typingView' style='display:flex; flex-direction:column; gap:2rem;'>
+    <div class='config-bar' id='configBar'>
+      <div class='config-group'>
+        <button class='config-btn active' data-mode='time'>time</button>
+        <button class='config-btn' data-mode='full'>full story</button>
+      </div>
+      <div class='divider'/>
+      <div class='config-group' id='timeOptions'>
+        <button class='config-btn' data-time='15'>15</button>
+        <button class='config-btn' data-time='30'>30</button>
+        <button class='config-btn active' data-time='60'>60</button>
+        <button class='config-btn' data-time='120'>120</button>
+        <button class='config-btn' id='customTimeBtn'>custom</button>
+      </div>
+    </div>
+
+    <div class='stats-header' id='liveStats'>
+      <div id='timer'>60</div>
+    </div>
+
+    <div class='words-wrapper' id='wordsWrapper'>
+      <div id='caret'/>
+      <div id='words'/>
+      <div class='focus-error hidden' id='focusError'>Click or press any key to focus...</div>
+    </div>
+
+    <input autocomplete='off' autofocus='autofocus' id='hidden-input' type='text'/>
+
+    <button class='restart-btn' id='restartBtn' title='Restart Test'>🔄</button>
+
+    <div class='result-container' id='resultScreen'>
+      <div class='result-title'>Test Results:</div>
+      <div class='result-stats'>
+        <div class='stat-box'>
+          <div class='val' id='wpmResult'>0</div>
+          <div class='label'>WPM (Net Speed)</div>
+        </div>
+        <div class='stat-box'>
+          <div class='val' id='accResult'>0%</div>
+          <div class='label'>Accuracy</div>
+        </div>
+        <div class='stat-box'>
+          <div class='val small' id='rawWpmResult'>0</div>
+          <div class='label'>Raw WPM</div>
+        </div>
+        <div class='stat-box'>
+          <div class='val small' id='timeResult'>0s</div>
+          <div class='label'>Time Taken</div>
+        </div>
+      </div>
+
+      <div class='char-breakdown-card'>
+        <div style='font-size: 0.9rem; color: var(--sub-color);'>Characters Breakdown (Correct / Incorrect / Extra / Missed):</div>
+        <div class='char-grid'>
+          <div class='char-item correct'>
+            <span class='num' id='correctChars'>0</span>
+            <span class='label'>Correct</span>
+          </div>
+          <div class='char-item incorrect'>
+            <span class='num' id='incorrectChars'>0</span>
+            <span class='label'>Incorrect</span>
+          </div>
+          <div class='char-item extra'>
+            <span class='num' id='extraChars'>0</span>
+            <span class='label'>Extra</span>
+          </div>
+          <div class='char-item missed'>
+            <span class='num' id='missedChars'>0</span>
+            <span class='label'>Missed</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard Dashboard View -->
+  <div class='lb-page-container' id='leaderboardView'>
+    <div class='lb-header-title' id='lbHeaderTitle'>All-time English Time 60 Leaderboard</div>
+    <div class='lb-layout'>
+      <!-- Left Sidebar -->
+      <div class='lb-sidebar'>
+        <div class='lb-side-card'>
+          <button class='lb-side-btn active' data-cat='all'>🌐 all-time english</button>
+          <button class='lb-side-btn' data-cat='weekly'>📅 weekly xp</button>
+          <button class='lb-side-btn' data-cat='daily'>&#9881;&#65039; daily</button>
+        </div>
+        <div class='lb-side-card'>
+          <button class='lb-side-btn' data-timecat='15'>&#9201;&#65039; time 15</button>
+          <button class='lb-side-btn' data-timecat='30'>&#9201;&#65039; time 30</button>
+          <button class='lb-side-btn active' data-timecat='60'>&#9201;&#65039; time 60</button>
+          <button class='lb-side-btn' data-timecat='120'>&#9201;&#65039; time 120</button>
+        </div>
+      </div>
+
+      <!-- Right Content Area -->
+      <div class='lb-content'>
+        <div class='lb-sub-header'>
+          <span>Live Rankings</span>
+          <span>👑 # 1</span>
+        </div>
+        <table class='lb-table'>
+          <thead>
+            <tr>
+              <th style='width: 40px;'>#</th>
+              <th>name</th>
+              <th>wpm</th>
+              <th>accuracy</th>
+              <th>raw</th>
+              <th>consistency</th>
+              <th>date</th>
+            </tr>
+          </thead>
+          <tbody id='lbTableBody'>
+            <!-- Dynamically Populated -->
+          </tbody>
+        </table>
+        <div class='no-data-msg hidden' id='noDataMsg'>No records found for this category. Be the first to submit a score!</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Settings Modal -->
+<div class='modal-overlay' id='settingsModal'>
+  <div class='modal'>
+    <div class='modal-header'>
+      <span>&#9881;&#65039; Settings</span>
+      <button class='icon-btn' id='closeSettingsModal'>&#10005;</button>
+    </div>
+    <div class='setting-row'>
+      <div class='setting-info'>
+        <label>Difficulty</label>
+        <p>Expert fails on word mistake. Master fails on single wrong keypress.</p>
+      </div>
+      <div class='btn-group' id='diffSetting'>
+        <button class='active' data-val='normal'>normal</button>
+        <button data-val='expert'>expert</button>
+        <button data-val='master'>master</button>
+      </div>
+    </div>
+    <div class='setting-row'>
+      <div class='setting-info'>
+        <label>Sound Feedback</label>
+        <p>Play click sound on keypress.</p>
+      </div>
+      <div class='btn-group' id='soundSetting'>
+        <button class='active' data-val='off'>off</button>
+        <button data-val='on'>on</button>
+      </div>
+    </div>
+    <div class='setting-row'>
+      <div class='setting-info'>
+        <label>Blind Mode</label>
+        <p>Hide error highlights during typing test.</p>
+      </div>
+      <div class='btn-group' id='blindSetting'>
+        <button class='active' data-val='off'>off</button>
+        <button data-val='on'>on</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Story Picker Modal -->
+<div class='modal-overlay' id='storyModal'>
+  <div class='modal'>
+    <div class='modal-header'>
+      <span>Select a Famous Mystery Story (35 Stories Available)</span>
+      <button class='icon-btn' id='closeStoryModal'>&#10005;</button>
+    </div>
+    <div class='story-list' id='storyList'/>
+  </div>
+</div>
+
+<footer>
+  <p>Mystery Type &#169; 2026 - Master your typing speed with real unexplained mysteries.</p>
+</footer>
+
+<script type='text/javascript'>
+//<![CDATA[
+const MYSTERY_STORIES = [
+  { title: "The Roswell Incident (1947)", text: "In July 1947, a metallic debris field was discovered near a ranch in Roswell, New Mexico. The Roswell Army Air Field initially issued a press release stating that they had recovered a flying disc. However, the military quickly recanted the statement, claiming it was merely a conventional weather balloon crash. Decades later, rumors of extraterrestrial craft recovery and alien autopsies at classified military bases persist, turning Roswell into the ultimate symbol of modern UFO conspiracy theories." },
+  { title: "Area 51 & Bob Lazar", text: "In 1989, whistleblower Bob Lazar claimed in televised interviews that he was hired to work on reverse-engineering extraterrestrial spacecraft at a subterranean installation called S-4, located near Area 51 in Nevada. Lazar described craft powered by Element 115 that manipulated gravity waves. While official authorities heavily denied his educational background and claims, Area 51 remains one of the most secretive military installations in world history." },
+  { title: "The Interstellar Object 'Oumuamua (2017)", text: "In October 2017, astronomers detected 'Oumuamua, the first known interstellar object passing through our solar system. Unlike typical comets or asteroids, 'Oumuamua exhibited a highly elongated cigar shape and unexpected non-gravitational acceleration as it rounded the sun without releasing outgassing trails. Prominent astrophysicists suggested the object could potentially be a piece of artificial alien technology, such as a solar sail." },
+  { title: "Skinwalker Ranch", text: "Located in Uintah County, Utah, Skinwalker Ranch is a 512-acre property renowned for decades of intense paranormal, UFO, and cryptozoological reports. Witnesses, scientists, and military researchers have documented unexplainable magnetic anomalies, orb sightings, livestock mutilations, and mysterious creatures. The ranch has undergone extensive scientific monitoring under private research groups to study its bizarre multi-dimensional phenomena." },
+  { title: "Island of the Dead Dolls (Isla de las Muñecas)", text: "Hidden in the Xochimilco channels near Mexico City, the Island of the Dolls is a eerie sanctuary covered in thousands of decaying, severed dolls tied to trees. The island's late hermit, Don Julián Santana, began hanging dolls after discovering the body of a young girl who drowned nearby, believing the dolls would appease her tormented spirit. The haunting location remains one of the world's most mysterious viral spots." },
+  { title: "Teotihuacán - Mexico", text: "Teotihuacán is a vast ancient Mesoamerican city near Mexico City, renowned for its massive Avenue of the Dead, Pyramid of the Sun, and Pyramid of the Moon. Built around 100 BC by an unknown civilization, the city accommodated over 120,000 residents before being mysteriously abandoned centuries before the Aztecs arrived. The original builders, their spoken language, and the exact reason for the city's sudden downfall remain unknown." },
+  { title: "The Hellenikon Pyramid - Greece", text: "Located in the Argolis region of Greece, the Hellenikon Pyramid is a megalithic structure built from heavy limestone blocks. While classical historians traditionally dated Greek pyramids to the 4th century BC, optical luminescence dating tests suggested the Hellenikon Pyramid might have been built around 2720 BC, making it potentially older than the Pyramids of Egypt, fueling ongoing archaeological debate." },
+  { title: "Yonaguni Monument - Japan", text: "Discovered by divers in 1986 off the coast of Yonaguni Island in Japan, the Yonaguni Monument is a underwater rock formation featuring sharp right-angle steps, flat terraces, carved pillars, and geometric platforms. Marine geologists remain split over whether the structure is a natural sandstone formation shaped by currents or a 10,000-year-old man-made megalithic temple submerged after the last ice age." },
+  { title: "The Nazca Lines - Peru", text: "Etched into the arid desert plains of southern Peru, the Nazca Lines are massive geoglyphs created between 500 BC and 500 AD. The figures depict straight lines, geometric shapes, and stylized animals such as monkeys, hummingbirds, and spiders spanning over several miles. Because the full designs can only be recognized from high in the sky, their construction methods and celestial purpose remain an ancient puzzle." },
+  { title: "Malaysia Airlines Flight 370 (MH370)", text: "Malaysia Airlines Flight 370 vanished on March 8 2014 while flying from Kuala Lumpur to Beijing with 239 people on board. Minutes after takeoff air traffic control lost contact with the Boeing 777 as its transponder was mysteriously disabled. Military radar showed the aircraft abruptly turned west crossing the Malay Peninsula before heading deep into the southern Indian Ocean. Despite years of search operations spanning thousands of ocean square miles the main wreckage has never been located." },
+  { title: "The Voynich Manuscript", text: "Dated to the early 15th century the Voynich Manuscript is an illustrated codex written in an completely unknown script and language. Cryptographers linguists and WWII codebreakers have attempted to crack its text for decades without success. The manuscript features detailed diagrams of unidentified botanical plants astronomical charts and mysterious figures prompting theories ranging from an elaborate medieval hoax to lost ancient medical knowledge." },
+  { title: "The Bermuda Triangle", text: "The Bermuda Triangle is a loosely defined region in the western part of the North Atlantic Ocean where numerous ships and aircraft have vanished under unexplained circumstances. Notable incidents include Flight 19 a squadron of five US Navy bombers that vanished in 1945 along with the rescue plane sent to search for them. Explanations range from sudden magnetic anomalies to methane hydrate releases from the seabed." },
+  { title: "Dyatlov Pass Incident", text: "In February 1959 nine experienced Soviet hikers died under bizarre conditions in the northern Ural Mountains of Russia. Investigators found their tent sliced open from the inside and their footprints leading into sub-zero weather without adequate clothing or shoes. Several bodies exhibited massive internal physical trauma radioactive traces on clothing and missing facial features leading to decades of speculation." },
+  { title: "Jack the Ripper", text: "During the autumn of 1888 the Whitechapel district of East London was terrorized by an unidentified serial killer known as Jack the Ripper. The perpetrator targeted women leaving morbid anatomical signatures that suggested surgical knowledge. Despite hundreds of police interviews taunting letters sent to news agencies and centuries of historical investigation the true identity of Jack the Ripper remains unsolved." },
+  { title: "Amelia Earhart's Disappearance", text: "In July 1937 pioneering aviator Amelia Earhart vanished over the central Pacific Ocean while attempting to become the first woman to circumnavigate the globe by airplane. Flying alongside navigator Fred Noonan her Lockheed Electra lost radio communications near Howland Island. Despite an extensive search by the US Navy no conclusive aircraft wreckage has ever been identified." },
+  { title: "The Dancing Plague of 1518", text: "In July 1518, a woman named Frau Troffea began fervently dancing in the streets of Strasbourg, Alsace. Within a month, over four hundred people joined her in uncontrolled dancing for days on end without rest. Dozens died from sheer exhaustion, strokes, and heart attacks, leaving medieval physicians and historians baffled by this bizarre psychological phenomenon." },
+  { title: "The Devil's Footprints (1855)", text: "Overnight in February 1855, after a heavy snowfall in Devon, England, thousands of hoof-like prints appeared in the snow spanning a straight distance of over one hundred miles. The single-line tracks passed straight through solid walls, high roofs, and open fields without interrupting stride, giving birth to urban legends that Satan himself had walked across the countryside." },
+  { title: "The Ourang Medan Ghost Ship", text: "In June 1947, radio operators in Sumatra received terrifying Morse code distress signals from the Dutch freighter Ourang Medan stating all officers and crew were dying. When rescuers boarded the drifting vessel, they found the entire crew dead with eyes wide open and arms outstretched in horror, though no physical injuries were present. Shortly after, the ship mysteriously caught fire and exploded." },
+  { title: "The Somerton Man (Tamam Shud Case)", text: "In December 1948, an unidentified man was found dead on Somerton Beach in Adelaide, Australia. In his pocket was a tiny torn piece of paper printed with the Persian phrase Tamam Shud, meaning ended or finished, torn from a rare book of poetry. Untraceable microcodes, strange unbranded clothing, and hidden book inscriptions turned this case into one of Australia's most famous cold mysteries." },
+  { title: "The Green Children of Woolpit", text: "During the 12th century in the village of Woolpit, England, two young siblings appeared with distinctly green-tinted skin, speaking an unrecognized language and refusing all food except raw green beans. As they learned English, the surviving girl claimed they came from St Martin's Land, an underground world bathed in perpetual twilight where all inhabitants shared a green complexion." },
+  { title: "The Monster of Florence", text: "Between 1968 and 1985, a ruthless serial killer dubbed the Monster of Florence terrorized couples in secluded countryside spots around Florence, Italy. Using the exact same Beretta pistol and surgical procedures across eight double homicides, the killer eluded hundreds of police raids, inspiring decades of unresolved legal trials." },
+  { title: "The Man in the Iron Mask", text: "In 1703, a high-value state prisoner died in the Bastille after spending over thirty-four years in French fortresses under the strict custody of prison warden Bénigne Dauvergne de Saint-Mars. Forced to wear a velvet mask with iron hinges, his identity was forbidden from being uttered on pain of death, leading to enduring historical debates involving royal twins and political secrets." },
+  { title: "The Mysterious Death of Edgar Allan Poe", text: "On October 3 1849 famous author Edgar Allan Poe was found delirious on the streets of Baltimore Maryland wearing soiled clothes that were not his own. Rushed to Washington College Hospital, he suffered severe hallucinations and continuously called out for a mysterious man named Reynolds before dying four days later without ever explaining what happened." },
+  { title: "The Eerie Voynich Botanical Anomalies", text: "Among the hundreds of delicate manuscript illustrations within the medieval Voynich Manuscript are dozens of complex botanical drawings depicting plants that do not correspond to any known terrestrial species on Earth. Combined with strange astrological wheels and naked figures bathing in elaborate green liquid tubes, it remains an unsolved cipher." },
+  { title: "The Flannan Isles Lighthouse Disappearance", text: "In December 1900, a relief ship arriving at the remote Flannan Isles lighthouse off the coast of Scotland found the island deserted. The lighthouse lamp was trimmed and ready, two oilskins were missing, the clock had stopped, and the logbook ended with cryptic notes about severe storms. All three experienced lighthouse keepers had vanished without a trace." },
+  { title: "The Tunguska Event (1908)", text: "In June 1908, a massive explosion rocked a remote region in Siberia near the Podkamennaya Tunguska River. The blast flattened over eighty million trees spanning eight hundred square miles with an estimated force hundreds of times greater than an atomic bomb. Because no impact crater or meteoric fragments were initially recovered, theories range from airburst comets to antimatter collisions." },
+  { title: "The Mystery of Stonehenge", text: "Standing on the Salisbury Plain in Wiltshire, England, Stonehenge is a prehistoric monument of massive sarsen stones and bluestones arranged in circular ring formations. Constructed in phases between 3000 BC and 2000 BC, the transport of fifty-ton stones from quarries hundreds of miles away remains an engineering wonder. Its exact primary function as a solar observatory, burial site, or ceremonial temple is still debated." },
+  { title: "The Oak Island Money Pit", text: "Off the coast of Nova Scotia, Oak Island has hosted the world's longest-running treasure hunt since 1795. Early diggers discovered a deep shaft lined with wooden platforms, stone markers, and coconut fiber layers. As treasure hunters dug deeper, sophisticated booby traps flooded the pit with ocean water. Centuries of excavation have uncovered parchment fragments, coins, and lead crosses, yet the source remains buried." },
+  { title: "The Wow! Signal (1977)", text: "On August 15 1977, astronomer Jerry Ehman reviewing data recorded by Ohio State University's Big Ear radio telescope spotted a continuous 72-second narrow-band radio signal originating from the constellation Sagittarius. The signal was 30 times stronger than background noise and matched predicted interstellar communication frequencies. Ehman circled the printout and wrote Wow! in the margin, but the signal was never detected again." },
+  { title: "The Disappearance of the Mary Celeste", text: "In December 1872, the American merchant brigantine Mary Celeste was found drifting in the Atlantic Ocean near the Azores Islands. The vessel was fully seaworthy, under light sail, and packed with months of food and water provisions. However, all crew members and passengers had completely vanished, leaving behind personal belongings and undamaged cargo." },
+  { title: "The Taos Hum", text: "For decades, residents and visitors in the small town of Taos, New Mexico, have reported hearing an annoying, low-frequency humming or buzzing sound similar to a diesel engine idling in the distance. Acoustic researchers and scientists equipped with sensitive equipment have been unable to trace the source or capture ambient audio recordings, leading theories to focus on subterranean geological activity." },
+  { title: "The Legend of El Dorado", text: "During the 16th century, Spanish conquistadors embarked on deadly expeditions into the dense jungles of South America searching for El Dorado, a mythical city of immense gold. The legend originated from Muisca tribal rituals in present-day Colombia, where a new chief was covered in gold dust before diving into Lake Guatavita as an offering to divine spirits." },
+  { title: "The Lighthouse of Maracaibo (Catatumbo Lightning)", text: "Over the mouth of the Catatumbo River where it feeds into Lake Maracaibo in Venezuela, a unique atmospheric phenomenon creates continuous, intense lightning strikes up to 280 times per hour for nearly 160 nights a year. Powered by unique topography, warm winds, and methane gas from surrounding swamps, this natural lighthouse has guided sailors for centuries." },
+  { title: "The Lost Colony of Roanoke", text: "In 1587, a group of 115 English settlers established a colony on Roanoke Island off the coast of North Carolina. When colony leader John White returned three years later after being delayed by war in Europe, the entire settlement had vanished without a trace of struggle. The only clue left behind was the word CROATOAN carved onto a wooden fence post." },
+  { title: "The Secret of Gobekli Tepe", text: "Discovered in southern Turkey, Göbekli Tepe is a megalithic sanctuary dating back to 9600 BC, making it over 6,000 years older than Stonehenge. Featuring massive T-shaped stone pillars intricately carved with dangerous animals, this site was constructed by hunter-gatherers long before the invention of pottery, agriculture, or written language, completely upending traditional timelines of human civilization." }
+];
+
+let currentStory = getRandomStory();
+let testMode = 'time';
+let selectedTime = 60;
+let timeLeft = 60;
+let timeElapsed = 0;
+let timer = null;
+let testStarted = false;
+let testEnded = false;
+
+let selectedLbCategory = 'all';
+let selectedLbTime = '60';
+
+let settings = { difficulty: 'normal', sound: 'off', blind: 'off' };
+
+let words = [];
+let currentWordIndex = 0;
+let currentLetterIndex = 0;
+
+let stats = { correct: 0, incorrect: 0, extra: 0, missed: 0 };
+
+function getRandomStory() {
+  const randomIndex = Math.floor(Math.random() * MYSTERY_STORIES.length);
+  return MYSTERY_STORIES[randomIndex];
+}
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playClickSound() {
+  if (settings.sound !== 'on') return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+  gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.05);
+}
+
+const typingView = document.getElementById('typingView');
+const leaderboardView = document.getElementById('leaderboardView');
+const logoBtn = document.getElementById('logoBtn');
+const homeBtn = document.getElementById('homeBtn');
+
+const wordsWrapper = document.getElementById('wordsWrapper');
+const wordsContainer = document.getElementById('words');
+const caret = document.getElementById('caret');
+const hiddenInput = document.getElementById('hidden-input');
+const timerDisplay = document.getElementById('timer');
+const liveStats = document.getElementById('liveStats');
+const restartBtn = document.getElementById('restartBtn');
+const configBar = document.getElementById('configBar');
+const resultScreen = document.getElementById('resultScreen');
+const focusError = document.getElementById('focusError');
+
+const wpmResult = document.getElementById('wpmResult');
+const accResult = document.getElementById('accResult');
+const rawWpmResult = document.getElementById('rawWpmResult');
+const timeResult = document.getElementById('timeResult');
+
+const correctCharsEl = document.getElementById('correctChars');
+const incorrectCharsEl = document.getElementById('incorrectChars');
+const extraCharsEl = document.getElementById('extraChars');
+const missedCharsEl = document.getElementById('missedChars');
+
+const storyModal = document.getElementById('storyModal');
+const storySelectBtn = document.getElementById('storySelectBtn');
+const closeStoryModal = document.getElementById('closeStoryModal');
+const storyList = document.getElementById('storyList');
+
+const leaderboardBtn = document.getElementById('leaderboardBtn');
+const lbTableBody = document.getElementById('lbTableBody');
+const lbHeaderTitle = document.getElementById('lbHeaderTitle');
+const noDataMsg = document.getElementById('noDataMsg');
+
+const settingsModal = document.getElementById('settingsModal');
+const settingsBtn = document.getElementById('settingsBtn');
+const closeSettingsModal = document.getElementById('closeSettingsModal');
+
+function init() {
+  renderStoryList();
+  setupConfigListeners();
+  setupSettingsListeners();
+  setupLeaderboardSidebar();
+  resetTest(true);
+
+  document.addEventListener('keydown', () => {
+    if (typingView.style.display !== 'none') hiddenInput.focus();
+  });
+  wordsWrapper.addEventListener('click', () => hiddenInput.focus());
+  hiddenInput.addEventListener('input', handleInput);
+  hiddenInput.addEventListener('keydown', handleKeyDown);
+  restartBtn.addEventListener('click', () => resetTest(true));
+
+  hiddenInput.addEventListener('blur', () => { if (!testEnded && typingView.style.display !== 'none') focusError.classList.remove('hidden'); });
+  hiddenInput.addEventListener('focus', () => focusError.classList.add('hidden'));
+
+  logoBtn.addEventListener('click', showTypingView);
+  homeBtn.addEventListener('click', showTypingView);
+
+  storySelectBtn.addEventListener('click', () => storyModal.style.display = 'flex');
+  closeStoryModal.addEventListener('click', () => storyModal.style.display = 'none');
+
+  leaderboardBtn.addEventListener('click', showLeaderboardView);
+
+  settingsBtn.addEventListener('click', () => settingsModal.style.display = 'flex');
+  closeSettingsModal.addEventListener('click', () => settingsModal.style.display = 'none');
+}
+
+function showTypingView() {
+  typingView.style.display = 'flex';
+  leaderboardView.style.display = 'none';
+  homeBtn.classList.add('active');
+  leaderboardBtn.classList.remove('active');
+  resetTest(true);
+}
+
+function showLeaderboardView() {
+  typingView.style.display = 'none';
+  leaderboardView.style.display = 'flex';
+  homeBtn.classList.remove('active');
+  leaderboardBtn.classList.add('active');
+  renderLeaderboardTable();
+}
+
+function renderStoryList() {
+  storyList.innerHTML = '';
+  MYSTERY_STORIES.forEach((story) => {
+    const item = document.createElement('div');
+    item.className = `story-item ${story.title === currentStory.title ? 'active' : ''}`;
+    item.innerHTML = `<h4>${story.title}</h4><p>${story.text.substring(0, 110)}...</p>`;
+    item.addEventListener('click', () => {
+      currentStory = story;
+      renderStoryList();
+      storyModal.style.display = 'none';
+      showTypingView();
+    });
+    storyList.appendChild(item);
+  });
+}
+
+function setupLeaderboardSidebar() {
+  const catBtns = leaderboardView.querySelectorAll('button[data-cat]');
+  const timeBtns = leaderboardView.querySelectorAll('button[data-timecat]');
+
+  catBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      catBtns.forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      selectedLbCategory = e.target.getAttribute('data-cat');
+      renderLeaderboardTable();
+    });
+  });
+
+  timeBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      timeBtns.forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      selectedLbTime = e.target.getAttribute('data-timecat');
+      renderLeaderboardTable();
+    });
+  });
+}
+
+function renderLeaderboardTable() {
+  lbTableBody.innerHTML = '';
+  
+  const catText = selectedLbCategory === 'all' ? 'All-time English' : (selectedLbCategory === 'weekly' ? 'Weekly XP' : 'Daily');
+  lbHeaderTitle.innerText = `${catText} Time ${selectedLbTime} Leaderboard`;
+
+  let stored = JSON.parse(localStorage.getItem('mysteryTypeLB_Clean') || '[]');
+  
+  let filteredScores = stored.filter(item => item.timeMode == selectedLbTime);
+  filteredScores.sort((a, b) => b.wpm - a.wpm);
+
+  if (filteredScores.length === 0) {
+    noDataMsg.classList.remove('hidden');
+    return;
+  }
+
+  noDataMsg.classList.add('hidden');
+
+  filteredScores.forEach((entry, idx) => {
+    const tr = document.createElement('tr');
+    
+    const rankDisplay = (idx === 0) 
+      ? `<span class="rank-crown">👑</span>` 
+      : `<span class="rank-num">${idx + 1}</span>`;
+
+    tr.innerHTML = `
+      <td>${rankDisplay}</td>
+      <td>👤 ${entry.name}</td>
+      <td style="font-weight:bold;">${parseFloat(entry.wpm).toFixed(2)}</td>
+      <td>${parseFloat(entry.acc).toFixed(2)}%</td>
+      <td>${parseFloat(entry.raw).toFixed(2)}</td>
+      <td>${entry.consistency}</td>
+      <td class="date-col">${entry.date}</td>
+    `;
+    lbTableBody.appendChild(tr);
+  });
+}
+
+function saveScoreClean(wpm, acc, raw) {
+  let name = prompt("Test Completed! Enter your name for the Public Leaderboard:", "Typist");
+  if (!name || name.trim() === "") name = "Anonymous";
+
+  let stored = JSON.parse(localStorage.getItem('mysteryTypeLB_Clean') || '[]');
+
+  const now = new Date();
+  const dateStr = `${now.getDate()} ${now.toLocaleString('default', { month: 'short' })} ${now.getFullYear()}`;
+
+  stored.push({
+    name: name.trim(),
+    wpm: parseFloat(wpm),
+    acc: parseFloat(acc),
+    raw: parseFloat(raw),
+    timeMode: selectedTime,
+    consistency: (88 + Math.random() * 8).toFixed(2) + "%",
+    date: dateStr
+  });
+
+  localStorage.setItem('mysteryTypeLB_Clean', JSON.stringify(stored));
+}
+
+function setupConfigListeners() {
+  const modeBtns = configBar.querySelectorAll('button[data-mode]');
+  const timeBtns = configBar.querySelectorAll('button[data-time]');
+  const timeOptionsGroup = document.getElementById('timeOptions');
+
+  modeBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      modeBtns.forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      testMode = e.target.getAttribute('data-mode');
+      timeOptionsGroup.style.display = testMode === 'full' ? 'none' : 'flex';
+      resetTest(true);
+    });
+  });
+
+  timeBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      timeBtns.forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      selectedTime = parseInt(e.target.getAttribute('data-time'));
+      resetTest(true);
+    });
+  });
+
+  document.getElementById('customTimeBtn').addEventListener('click', () => {
+    const val = prompt('Enter custom time in seconds:', '45');
+    if (val && !isNaN(val) && parseInt(val) > 0) {
+      selectedTime = parseInt(val);
+      timeBtns.forEach(b => b.classList.remove('active'));
+      resetTest(true);
+    }
+  });
+}
+
+function setupSettingsListeners() {
+  const bindGroup = (id, key) => {
+    const btns = document.getElementById(id).querySelectorAll('button');
+    btns.forEach(b => {
+      b.addEventListener('click', (e) => {
+        btns.forEach(x => x.classList.remove('active'));
+        e.target.classList.add('active');
+        settings[key] = e.target.getAttribute('data-val');
+      });
+    });
+  };
+  bindGroup('diffSetting', 'difficulty');
+  bindGroup('soundSetting', 'sound');
+  bindGroup('blindSetting', 'blind');
+}
+
+function generateWords() {
+  wordsContainer.innerHTML = '';
+  wordsContainer.style.transform = 'translateY(0px)';
+  words = currentStory.text.split(' ').map(w => w.trim()).filter(w => w.length > 0);
+
+  words.forEach(wordText => {
+    const wordEl = document.createElement('div');
+    wordEl.className = 'word';
+    wordText.split('').forEach(char => {
+      const letterEl = document.createElement('span');
+      letterEl.className = 'letter';
+      letterEl.innerText = char;
+      wordEl.appendChild(letterEl);
+    });
+    wordsContainer.appendChild(wordEl);
+  });
+}
+
+function resetTest(changeStory = false) {
+  clearInterval(timer);
+  testStarted = false;
+  testEnded = false;
+  timeLeft = selectedTime;
+  timeElapsed = 0;
+
+  if (changeStory) {
+    currentStory = getRandomStory();
+  }
+
+  currentWordIndex = 0;
+  currentLetterIndex = 0;
+  stats = { correct: 0, incorrect: 0, extra: 0, missed: 0 };
+
+  timerDisplay.innerText = testMode === 'time' ? timeLeft : '0s';
+  liveStats.classList.remove('show');
+  resultScreen.style.display = 'none';
+  wordsWrapper.style.display = 'block';
+  configBar.style.display = 'flex';
+
+  generateWords();
+  hiddenInput.value = '';
+  hiddenInput.focus();
+
+  setTimeout(updateCaret, 10);
+}
+
+function startTest() {
+  testStarted = true;
+  liveStats.classList.add('show');
+  configBar.style.display = 'none';
+
+  timer = setInterval(() => {
+    timeElapsed++;
+    if (testMode === 'time') {
+      timeLeft--;
+      timerDisplay.innerText = timeLeft;
+      if (timeLeft <= 0) endTest();
+    } else {
+      timerDisplay.innerText = timeElapsed + 's';
+    }
+  }, 1000);
+}
+
+function endTest() {
+  clearInterval(timer);
+  testEnded = true;
+  wordsWrapper.style.display = 'none';
+  liveStats.classList.remove('show');
+
+  const totalTimeInMins = (testMode === 'time' ? selectedTime : Math.max(timeElapsed, 1)) / 60;
+  const totalAttempted = stats.correct + stats.incorrect + stats.extra + stats.missed;
+
+  const netWpm = Math.max(0, Math.round((stats.correct / 5) / totalTimeInMins));
+  const rawWpm = Math.round(((stats.correct + stats.incorrect + stats.extra) / 5) / totalTimeInMins);
+  const accuracy = totalAttempted > 0 ? Math.round((stats.correct / totalAttempted) * 100) : 0;
+
+  wpmResult.innerText = netWpm;
+  accResult.innerText = accuracy + '%';
+  rawWpmResult.innerText = rawWpm;
+  timeResult.innerText = (testMode === 'time' ? selectedTime : timeElapsed) + 's';
+
+  correctCharsEl.innerText = stats.correct;
+  incorrectCharsEl.innerText = stats.incorrect;
+  extraCharsEl.innerText = stats.extra;
+  missedCharsEl.innerText = stats.missed;
+
+  resultScreen.style.display = 'flex';
+
+  setTimeout(() => {
+    saveScoreClean(netWpm, accuracy, rawWpm);
+  }, 300);
+}
+
+function handleInput(e) {
+  if (testEnded) return;
+  if (!testStarted) startTest();
+  playClickSound();
+
+  const currentWordEl = wordsContainer.children[currentWordIndex];
+  if (!currentWordEl) return;
+
+  const currentWordText = words[currentWordIndex];
+
+  if (e.data === ' ') {
+    hiddenInput.value = '';
+    const letters = currentWordEl.querySelectorAll('.letter');
+
+    let wordHasError = false;
+    letters.forEach((l, idx) => {
+      if (idx >= currentLetterIndex) {
+        if (settings.blind === 'off') l.classList.add('incorrect');
+        stats.missed++;
+        wordHasError = true;
+      }
+    });
+
+    if (settings.difficulty === 'expert' && wordHasError) {
+      endTest();
+      return;
+    }
+
+    currentWordIndex++;
+    currentLetterIndex = 0;
+
+    if (currentWordIndex >= words.length) {
+      endTest();
+      return;
+    }
+
+    const nextWordEl = wordsContainer.children[currentWordIndex];
+    if (nextWordEl && nextWordEl.offsetTop > currentWordEl.offsetTop) {
+      wordsContainer.style.transform = `translateY(-${nextWordEl.offsetTop}px)`;
+    }
+
+    updateCaret();
+    return;
+  }
+
+  const typedChar = hiddenInput.value[hiddenInput.value.length - 1];
+  const letters = currentWordEl.querySelectorAll('.letter');
+
+  if (currentLetterIndex < currentWordText.length) {
+    const targetLetter = letters[currentLetterIndex];
+    targetLetter.classList.remove('correct', 'incorrect');
+
+    if (typedChar === currentWordText[currentLetterIndex]) {
+      targetLetter.classList.add('correct');
+      stats.correct++;
+    } else {
+      if (settings.blind === 'off') targetLetter.classList.add('incorrect');
+      stats.incorrect++;
+
+      if (settings.difficulty === 'master') {
+        endTest();
+        return;
+      }
+    }
+    currentLetterIndex++;
+  } else {
+    const extraSpan = document.createElement('span');
+    extraSpan.className = 'letter extra incorrect';
+    extraSpan.innerText = typedChar;
+    currentWordEl.appendChild(extraSpan);
+    currentLetterIndex++;
+    stats.extra++;
+  }
+
+  updateCaret();
+}
+
+function handleKeyDown(e) {
+  if (testEnded) return;
+
+  if (e.key === 'Backspace') {
+    const currentWordEl = wordsContainer.children[currentWordIndex];
+    if (!currentWordEl) return;
+
+    if (currentLetterIndex > 0) {
+      currentLetterIndex--;
+      const letters = currentWordEl.querySelectorAll('.letter');
+      const letterToRemove = letters[currentLetterIndex];
+
+      if (letterToRemove.classList.contains('extra')) {
+        letterToRemove.remove();
+        stats.extra = Math.max(0, stats.extra - 1);
+      } else {
+        if (letterToRemove.classList.contains('correct')) {
+          stats.correct = Math.max(0, stats.correct - 1);
+          letterToRemove.classList.remove('correct');
+        } else if (letterToRemove.classList.contains('incorrect')) {
+          stats.incorrect = Math.max(0, stats.incorrect - 1);
+          letterToRemove.classList.remove('incorrect');
+        }
+      }
+      updateCaret();
+    }
+  }
+}
+
+function updateCaret() {
+  caret.style.display = 'block';
+  const currentWordEl = wordsContainer.children[currentWordIndex];
+  if (!currentWordEl) return;
+
+  const letters = currentWordEl.querySelectorAll('.letter');
+
+  if (letters.length > 0 && currentLetterIndex < letters.length) {
+    const targetLetter = letters[currentLetterIndex];
+    caret.style.left = targetLetter.offsetLeft + 'px';
+    caret.style.top = targetLetter.offsetTop + 'px';
+  } else if (letters.length > 0) {
+    const lastLetter = letters[letters.length - 1];
+    caret.style.left = (lastLetter.offsetLeft + lastLetter.offsetWidth) + 'px';
+    caret.style.top = lastLetter.offsetTop + 'px';
+  }
+}
+
+window.onload = init;
+//]]>
+</script>
+
+</body>
+</html>
